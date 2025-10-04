@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz History</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+    <style>
+        .form-control {
+            box-shadow: none !important;
+        }
+
+        .form-select {
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="d-flex flex-column min-vh-100">
+
+        <nav class="navbar navbar-expand-lg bg-success border-success border-bottom">
+            <div class="container-fluid my-1 mx-5">
+                <a class="navbar-brand text-white fw-bold fs-5" href="#">
+                    <i class="fa-solid fa-file-invoice"></i> SKILL GAP ANALYSIS</a>
+                <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars text-light"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold"
+                                href="{{ url_for('userhome') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="{{ url_for('upload') }}">Upload</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white fw-bold active" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Quiz
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Maths') }}">Maths</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Computer Science') }}">Computer Science</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='C++') }}">C++</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Aptitude') }}">Aptitude</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz_history') }}">Quiz History</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="{{ url_for('ulogout') }}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="container flex-fill d-flex flex-column my-4">
+            <h3 class="text-success-emphasis text-center mb-4">Quiz History</h3>
+
+            <div class="card">
+                <div class="card-body">
+                    <table id="quizHistoryTable" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Segment</th>
+                                <th>Score</th>
+                                <th>Date/Time</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in quiz_results %}
+                            <tr>
+                                <td>{{ result.segment }}</td>
+                                <td>{{ result.score }}</td>
+                                <td>{{ result.timestamp }}</td>
+                                <td>
+                                    <a href="{{ url_for('quiz_items', result_id=result.id) }}" class="btn btn-sm btn-info">View Details</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <script src="../static/js/jquery.js"></script>
+    <script src="../static/js/bootstrap.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <script>
+        $(function () {
+            $('.toast').toast('show');
+
+            $("#quizHistoryTable").DataTable({
+                order: [[2, 'desc']], // Order by timestamp descending
+                lengthMenu: [
+                    [5, 10, 25, 50, -1],
+                    [5, 10, 25, 50, 'All'],
+                ],
+            });
+        })
+    </script>
+
+</body>
+
+
+</html>

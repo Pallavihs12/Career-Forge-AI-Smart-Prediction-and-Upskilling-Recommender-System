@@ -1,0 +1,6 @@
+Flask
+PyMuPDF
+mistralai
+mysql-connector-python
+requests
+google-api-python-client

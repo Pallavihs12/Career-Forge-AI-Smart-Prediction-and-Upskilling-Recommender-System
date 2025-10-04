@@ -1,0 +1,41 @@
+﻿Question No.,Question of maths,Option A,Option B,Option C,Option D,Correct Answer,Segment
+1,What is 7 + 6?,12,13,14,15,13,Maths
+2,What is the square root of 81?,8,9,10,11,9,Maths
+3,What is the value of π (pi)?,3.14,2.71,1.62,3.41,3.14,Maths
+4,Solve: 2x = 10,x=3,x=4,x=5,x=6,x=5,Maths
+5,What is 25% of 200?,25,50,75,100,50,Maths
+6,What is 12²?,124,144,134,154,144,Maths
+7,"If angle A = 90°, it is called?",Acute,Right,Obtuse,Reflex,Right,Maths
+8,"What is the area of a rectangle (l=10, b=5)?",50,25,30,60,50,Maths
+9,"What comes next in the sequence: 2, 4, 8, 16...?",18,24,32,36,32,Maths
+10,What is 100 ÷ 4?,20,25,30,35,25,Maths
+11,"What is the next number: 2, 4, 8, 16, ___?",18,24,32,36,32,Aptitude
+12,"If a train travels 90 km in 3 hours, what is the speed?",25 km/h,30 km/h,35 km/h,40 km/h,30km/h,Aptitude
+13,"What is the opposite of ""generous""?",Kind,Mean,Brave,Loyal,Mean,Aptitude
+14,5 men can complete a task in 12 days. How many days for 10 men?,6,7,8,9,6,Aptitude
+15,"Find the missing number: 3, 6, 9, __, 15",10,11,12,13,12,Aptitude
+16,A sells a pen for ₹120 making a profit of 20%. What was the cost price?,₹90,₹100,₹110,₹80,₹ 100.00,Aptitude
+17,"What comes next: Z, X, V, T, ___?",R,Q,S,U,R,Aptitude
+18,"If the area of a square is 64, what is the side length?",6,7,8,9,8,Aptitude
+19,What is 75% of 160?,100,110,120,130,120,Aptitude
+20,"Synonym of ""Brief""?",Long,Quick,Short,Wide,Short,Aptitude
+21,Which of the following is a correct C++ comment?,# This is a comment,// This is a comment,<!-- Comment -->,%% comment,// This is a comment,C++
+22,Who developed C++?,Dennis Ritchie,Bjarne Stroustrup,James Gosling,Guido van Rossum,Bjarne Stroustrup,C++
+23,What is the correct file extension for C++ files?,.c,.cpp,.cp,.class,.cpp,C++
+24,Which header file is required for cout?,stdio.h,iostream,conio.h,string.h,iostream,C++
+25,What is the output of: cout << 5 + 2 * 3;?,21,11,17,25,11,C++
+26,Which of the following is a valid variable name in C++?,1var,my-var,_total,class,my-var,C++
+27,What does OOP stand for?,Object Oriented Programming,Order of Operation Processing,Operator Overloaded Program,None,Order of Operation Processing,C++
+28,Which keyword is used to define a class in C++?,struct,object,class,define,object,C++
+29,What is a constructor?,Function with return type,Special function to initialize objects,Destructor,None,Special function to initialize objects,C++
+30,Which operator is used to access members of a class using a pointer?,.,->,*,&,->,C++
+31,What does CPU stand for?,Central Process Unit,Central Processing Unit,Computer Process Utility,Central Program Unit,Central Processing Unit,Computer Science
+32,Which of these is an input device?,Printer,Monitor,Keyboard,Speaker,Keyboard,Computer Science
+33,What is the binary of 5?,110,101,111,100,101,Computer Science
+34,What does HTML stand for?,HyperText Markup Language,HighText Mark Language,HyperText Markdown Language,HyperTransfer Markup Language,HyperText Markup Language,Computer Science
+35,RAM is used for?,Permanent Storage,Processing,Temporary Storage,Display,Temporary Storage,Computer Science
+36,Which language is used to style web pages?,HTML,jQuery,CSS,XML,CSS,Computer Science
+37,What is the full form of URL?,Uniform Resource Locator,Uniform Reference Locator,Universal Resource Link,Uniform Register Link,Uniform Resource Locator,Computer Science
+38,Which company created Windows OS?,Apple,IBM,Microsoft,Google,Microsoft,Computer Science
+39,What is the brain of the computer?,Monitor,CPU,RAM,Hard Disk,CPU,Computer Science
+40,What is a virus in computers?,A game,A memory device,A malware program,A browser,A malware program,Computer Science

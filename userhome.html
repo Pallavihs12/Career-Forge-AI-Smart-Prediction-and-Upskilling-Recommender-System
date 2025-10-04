@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upskill - Dashboard</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+    <style>
+        .form-control {
+            box-shadow: none !important;
+        }
+
+        .form-select {
+            box-shadow: none !important;
+        }
+
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="d-flex flex-column min-vh-100">
+
+        <nav class="navbar navbar-expand-lg bg-success border-success border-bottom">
+            <div class="container-fluid my-1 mx-5">
+                <a class="navbar-brand text-white fw-bold fs-5" href="#">
+                    <i class="fa-solid fa-file-invoice"></i> SKILL GAP ANALYSIS</a>
+                <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars text-light"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold text-decoration-underline link-offset-2 active"
+                                href="/userhome">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="/upload">Upload</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white fw-bold" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Quiz
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Maths') }}">Maths</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Computer Science') }}">Computer Science</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='C++') }}">C++</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Aptitude') }}">Aptitude</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz_history') }}">Quiz History</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="{{ url_for('ulogout') }}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="display-4 fw-bold mb-3">
+                            Welcome back, {{ username }}! 👋
+                        </h1>
+                        <p class="lead mb-4">
+                            Ready to advance your career? Analyze your skills, take quizzes, and discover new opportunities.
+                        </p>
+                        <a href="/upload" class="btn btn-light btn-lg me-3">
+                            <i class="fas fa-upload me-2"></i>Analyze Resume
+                        </a>
+                        <a href="{{ url_for('quiz', segment='Computer Science') }}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-brain me-2"></i>Take Quiz
+                        </a>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <i class="fas fa-chart-line fa-8x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container my-5">
+            
+            <!-- Features Section -->
+            <div class="row mb-5">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="display-6 fw-bold text-dark">What would you like to do today?</h2>
+                    <p class="lead text-muted">Choose from our powerful career development tools</p>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-5 justify-content-center">
+                <!-- Resume Analysis Card -->
+                <div class="col-lg-5 col-md-6">
+                    <div class="card feature-card h-100 text-center p-4">
+                        <div class="card-body">
+                            <i class="fas fa-file-alt feature-icon text-primary"></i>
+                            <h4 class="card-title mb-3">Resume Analysis</h4>
+                            <p class="card-text text-muted mb-4">
+                                Upload your resume and get AI-powered skill gap analysis with personalized recommendations.
+                            </p>
+                            <a href="/upload" class="btn btn-primary btn-lg">
+                                <i class="fas fa-upload me-2"></i>Start Analysis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill Assessment Card -->
+                <div class="col-lg-5 col-md-6">
+                    <div class="card feature-card h-100 text-center p-4">
+                        <div class="card-body">
+                            <i class="fas fa-brain feature-icon text-success"></i>
+                            <h4 class="card-title mb-3">Skill Assessment</h4>
+                            <p class="card-text text-muted mb-4">
+                                Test your knowledge with our comprehensive quizzes in various technical domains.
+                            </p>
+                            <div class="dropdown">
+                                <button class="btn btn-success btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-play me-2"></i>Take Quiz
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Computer Science') }}">
+                                        <i class="fas fa-laptop me-2"></i>Computer Science
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('quiz', segment='C++') }}">
+                                        <i class="fas fa-code me-2"></i>C++ Programming
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Maths') }}">
+                                        <i class="fas fa-calculator me-2"></i>Mathematics
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Aptitude') }}">
+                                        <i class="fas fa-puzzle-piece me-2"></i>Aptitude
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card stats-card">
+                        <div class="card-body text-center p-4">
+                            <h3 class="mb-3">
+                                <i class="fas fa-rocket me-2"></i>Ready to Boost Your Career?
+                            </h3>
+                            <p class="mb-4">
+                                Join thousands of professionals who have advanced their careers using our platform
+                            </p>
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <h4><i class="fas fa-users me-2"></i>10K+</h4>
+                                    <p class="mb-0">Active Users</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4><i class="fas fa-file-alt me-2"></i>50K+</h4>
+                                    <p class="mb-0">Resumes Analyzed</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4><i class="fas fa-graduation-cap me-2"></i>100K+</h4>
+                                    <p class="mb-0">Skills Improved</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <script src="../static/js/jquery.js"></script>
+    <script src="../static/js/bootstrap.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <script>
+        $(function () {
+
+            $('.toast').toast('show');
+
+
+            $("#usertable").DataTable({
+                lengthMenu: [
+                    [5, 10, 25, 50, -1],
+                    [5, 10, 25, 50, 'All'],
+                ],
+            });
+
+
+        })
+    </script>
+
+</body>
+
+
+</html>

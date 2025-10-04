@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upskill - Resume Analysis</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .skill-card {
+            transition: transform 0.2s ease-in-out;
+            border-left: 4px solid #007bff;
+        }
+        .skill-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: #0056b3;
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+        .skill-badge {
+            margin: 2px;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+        .missing-skill {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+        }
+        .present-skill {
+            background: linear-gradient(45deg, #28a745, #218838);
+            color: white;
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            transition: stroke-dasharray 0.35s;
+            transform-origin: 50% 50%;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: none;
+            border-left: 4px solid #28a745;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="d-flex flex-column min-vh-100">
+
+        <nav class="navbar navbar-expand-lg bg-success border-success border-bottom">
+            <div class="container-fluid my-1 mx-5">
+                <a class="navbar-brand text-white fw-bold fs-5" href="#">
+                    <i class="fa-solid fa-file-invoice"></i> SKILL GAP ANALYSIS</a>
+                <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars text-light"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="/userhome">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold text-decoration-underline link-offset-2 active"
+                                href="/upload">Upload</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white fw-bold" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Quiz
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Maths') }}">Maths</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Computer Science') }}">Computer Science</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='C++') }}">C++</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz', segment='Aptitude') }}">Aptitude</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('quiz_history') }}">Quiz History</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white fw-bold" href="/ulogout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% if success %}
+        <div class="container mt-3">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Success!</strong> {{ success }}
+                {% if resume_uploaded %}
+                <div class="mt-2">
+                    <small><i class="fas fa-info-circle me-1"></i>Your resume has been processed and skills have been extracted for analysis.</small>
+                </div>
+                {% endif %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="container my-4">
+
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="text-center mb-4">
+                        <h2 class="display-6 fw-bold text-primary">
+                            <i class="fas fa-chart-line me-3"></i>Resume Skill Gap Analysis
+                        </h2>
+                        <p class="lead text-muted">Upload your resume and discover skill gaps for your dream job</p>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post" id="uploadimageform" enctype="multipart/form-data">
+
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-10">
+                        <div class="card skill-card">
+                            <div class="card-body p-4">
+                                <div class="upload-area mb-4">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                    <h5 class="mb-3">Upload Your Resume</h5>
+                                    <input type="file" class="form-control shadow-none" name="file" id="file"
+                                        accept="application/pdf" style="display: none;">
+                                    <button type="button" class="btn btn-outline-primary btn-lg" onclick="document.getElementById('file').click()">
+                                        <i class="fas fa-file-pdf me-2"></i>Choose PDF File
+                                    </button>
+                                    <p class="text-muted mt-2 mb-0">
+                                        <small>Supported format: PDF only | Max size: 10MB</small>
+                                    </p>
+                                    <div id="fileName" class="mt-2 text-success fw-bold"></div>
+                                    <div class="invalid-feedback">
+                                        Please select a PDF file
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label for="job_designation" class="form-label fw-bold">
+                                            <i class="fas fa-briefcase me-2"></i>Target Job Role
+                                        </label>
+                                        <input type="text" class="form-control form-control-lg shadow-none" 
+                                               name="job_designation" id="job_designation"
+                                               placeholder="e.g. Full Stack Developer, Data Scientist, DevOps Engineer" required>
+                                        <div class="invalid-feedback">
+                                            Please enter your desired job designation
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button type="submit" id="analyzeBtn" class="btn btn-primary btn-lg w-100">
+                                            <i class="fas fa-search me-2"></i>Analyze Skills
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if skill_gap_analysis %}
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card skill-card">
+                            <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-chart-bar me-2"></i>Skill Gap Analysis Results
+                                </h4>
+                                <small>Analysis for: <strong>{{ job_designation }}</strong></small>
+                            </div>
+                            <div class="card-body p-4">
+                                
+                                <!-- Statistics Cards -->
+                                <div class="row mb-4">
+                                    <div class="col-md-4">
+                                        <div class="card stats-card text-center p-3">
+                                            <h3 class="mb-1">{{ skill_gap_analysis.resume_skills|length }}</h3>
+                                            <small>Your Skills</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card stats-card text-center p-3">
+                                            <h3 class="mb-1">{{ skill_gap_analysis.required_skills|length }}</h3>
+                                            <small>Required Skills</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card stats-card text-center p-3">
+                                            <h3 class="mb-1">{{ skill_gap_analysis.missing_skills|length }}</h3>
+                                            <small>Skills to Learn</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Charts Section -->
+                                <div class="row mb-4">
+                                    <div class="col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Skill Distribution</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="chart-container">
+                                                    <canvas id="skillPieChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Skills Comparison</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="chart-container">
+                                                    <canvas id="skillBarChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Skills Lists -->
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header bg-success text-white">
+                                                <h6 class="mb-0"><i class="fas fa-check-circle me-2"></i>Your Skills ({{ skill_gap_analysis.resume_skills|length }})</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="d-flex flex-wrap">
+                                                    {% for skill in skill_gap_analysis.resume_skills %}
+                                                    <span class="badge present-skill skill-badge">
+                                                        <i class="fas fa-check me-1"></i>{{ skill }}
+                                                    </span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="card">
+                                            <div class="card-header bg-warning text-dark">
+                                                <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Skills to Learn ({{ skill_gap_analysis.missing_skills|length }})</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="d-flex flex-wrap">
+                                                    {% for skill in skill_gap_analysis.missing_skills %}
+                                                    <span class="badge missing-skill skill-badge">
+                                                        <i class="fas fa-plus me-1"></i>{{ skill }}
+                                                    </span>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Progress Indicator -->
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body text-center">
+                                                <h6>Skill Match Percentage</h6>
+                                                {% set match_percentage = ((skill_gap_analysis.resume_skills|length - skill_gap_analysis.missing_skills|length) / skill_gap_analysis.required_skills|length * 100) if skill_gap_analysis.required_skills|length > 0 else 0 %}
+                                                <div class="progress mb-3" style="height: 25px;">
+                                                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                                                         role="progressbar" style="width: {{ match_percentage }}%">
+                                                        {{ "%.1f"|format(match_percentage) }}%
+                                                    </div>
+                                                </div>
+                                                <p class="text-muted mb-0">
+                                                    You have {{ skill_gap_analysis.resume_skills|length - skill_gap_analysis.missing_skills|length }} out of {{ skill_gap_analysis.required_skills|length }} required skills
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if job_results %}
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card skill-card">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-briefcase me-2"></i>Recommended Job Opportunities
+                                </h4>
+                                <small>Based on your skill gaps and career goals</small>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-4">
+                                    {% for job in job_results %}
+                                    <div class="col-lg-6">
+                                        <div class="card h-100 border-0 shadow-sm">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                                    <h5 class="card-title text-primary mb-0">{{ job.title }}</h5>
+                                                    <span class="badge bg-success">{{ job.category.label }}</span>
+                                                </div>
+                                                
+                                                <h6 class="card-subtitle mb-3 text-muted">
+                                                    <i class="fas fa-building me-1"></i>{{ job.company.display_name }}
+                                                </h6>
+
+                                                <p class="card-text mb-3">
+                                                    <i class="fas fa-map-marker-alt me-1 text-danger"></i>
+                                                    {{ job.location.display_name }}
+                                                </p>
+
+                                                <p class="card-text mb-3">
+                                                    <span class="short-text">{{ job.description[:150] }}...</span>
+                                                    <span class="full-text d-none">{{ job.description }}</span>
+                                                    <a href="#" class="read-more text-primary">Read more</a>
+                                                </p>
+
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-calendar me-1"></i>
+                                                        Posted: {{ job.created.split('T')[0] }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer bg-transparent">
+                                                <a href="{{ job.redirect_url }}" class="btn btn-primary w-100" target="_blank">
+                                                    <i class="fas fa-external-link-alt me-2"></i>Apply Now
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if video_tutorials %}
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card skill-card">
+                            <div class="card-header bg-info text-white">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-play-circle me-2"></i>Learning Resources
+                                </h4>
+                                <small>Curated tutorials to bridge your skill gaps</small>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-4">
+                                    {% for keyword, tutorials_list in video_tutorials.items() %}
+                                        {% if tutorials_list %}
+                                        <div class="col-lg-6">
+                                            <div class="card border-0 shadow-sm">
+                                                <div class="card-header bg-light">
+                                                    <h6 class="mb-0 text-primary">
+                                                        <i class="fas fa-graduation-cap me-2"></i>
+                                                        {{ keyword | title }} Tutorials
+                                                    </h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    {% for tutorial in tutorials_list %}
+                                                    <div class="d-flex align-items-start mb-3 p-2 rounded" style="background-color: #f8f9fa;">
+                                                        <div class="flex-shrink-0 me-3">
+                                                            <i class="fab fa-youtube text-danger fa-2x"></i>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-1">
+                                                                <a href="{{ tutorial.link }}" target="_blank" 
+                                                                   class="text-decoration-none text-dark">
+                                                                    {{ tutorial.title[:60] }}{% if tutorial.title|length > 60 %}...{% endif %}
+                                                                </a>
+                                                            </h6>
+                                                            <a href="{{ tutorial.link }}" target="_blank" 
+                                                               class="btn btn-sm btn-outline-primary">
+                                                                <i class="fas fa-play me-1"></i>Watch Tutorial
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% elif success %}
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card skill-card">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                <h5>No Learning Resources Found</h5>
+                                <p class="text-muted">No relevant video tutorials were found based on the extracted skills. Try uploading a more detailed resume or check back later.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}   
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="../static/js/jquery.js"></script>
+    <script src="../static/js/bootstrap.js"></script>
+
+    <script>
+        $(function () {
+            // File upload handling
+            $("#file").change(function() {
+                var fileName = $(this).val().split('\\').pop();
+                if (fileName) {
+                    $("#fileName").html('<i class="fas fa-check-circle me-2"></i>Selected: ' + fileName);
+                } else {
+                    $("#fileName").html('');
+                }
+            });
+
+            // Read more functionality
+            $('.read-more').click(function (e) {
+                e.preventDefault();
+                var $this = $(this);
+                var $cardText = $this.closest('.card-text');
+                $cardText.find('.short-text').toggleClass('d-none');
+                $cardText.find('.full-text').toggleClass('d-none');
+                if ($this.text() === "Read more") {
+                    $this.text("Show less");
+                } else {
+                    $this.text("Read more");
+                }
+            });
+
+            // Form validation
+            $("#uploadimageform").on("submit", function (e) {
+                var file = $("#file").val();
+                var jobDesignation = $("#job_designation").val();
+                var isValid = true;
+
+                if (file == "") {
+                    $("#file").addClass("is-invalid");
+                    isValid = false;
+                } else {
+                    $("#file").removeClass("is-invalid");
+                }
+
+                if (jobDesignation == "") {
+                    $("#job_designation").addClass("is-invalid");
+                    isValid = false;
+                } else {
+                    $("#job_designation").removeClass("is-invalid");
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                } else {
+                    // Show loading state
+                    $("#analyzeBtn").html('<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...');
+                    $("#analyzeBtn").prop('disabled', true);
+                }
+            });
+
+            // Initialize charts if skill gap analysis exists
+            {% if skill_gap_analysis %}
+            initializeCharts();
+            {% endif %}
+        });
+
+        {% if skill_gap_analysis %}
+        function initializeCharts() {
+            // Pie Chart for Skill Distribution
+            const pieCtx = document.getElementById('skillPieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Skills You Have', 'Skills to Learn'],
+                    datasets: [{
+                        data: [
+                            {{ skill_gap_analysis.resume_skills|length - skill_gap_analysis.missing_skills|length }},
+                            {{ skill_gap_analysis.missing_skills|length }}
+                        ],
+                        backgroundColor: ['#28a745', '#dc3545'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Bar Chart for Skills Comparison
+            const barCtx = document.getElementById('skillBarChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Your Skills', 'Required Skills', 'Missing Skills'],
+                    datasets: [{
+                        label: 'Number of Skills',
+                        data: [
+                            {{ skill_gap_analysis.resume_skills|length }},
+                            {{ skill_gap_analysis.required_skills|length }},
+                            {{ skill_gap_analysis.missing_skills|length }}
+                        ],
+                        backgroundColor: ['#28a745', '#007bff', '#dc3545'],
+                        borderColor: ['#1e7e34', '#0056b3', '#c82333'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        {% endif %}
+    </script>
+
+</body>
+</html>
