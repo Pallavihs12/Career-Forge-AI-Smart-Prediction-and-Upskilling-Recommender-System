@@ -32,8 +32,8 @@ except mysql.connector.Error as err:
     link = None
 
 # AI Configuration
-mistral_api_key = "WTuMOibXWmpTqjvscYHSaaCOjjXCakkJ"
-mistral_model = "pixtral-large-2411"
+mistral_api_key = "your_mistral_appi_key"
+mistral_model = "your_mistral_model_key"
 try:
     client = Mistral(api_key=mistral_api_key)
     print("Mistral client initialized")
@@ -742,3 +742,4 @@ if __name__ == "__main__":
         os.makedirs("workspace")
 
     app.run(host='0.0.0.0', port=5000, debug=True)
+
