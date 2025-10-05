@@ -15,7 +15,7 @@ import googleapiclient.discovery
 import googleapiclient.errors
 
 app = Flask(__name__)
-app.secret_key = "Qazwsx@123"
+app.secret_key = ".env"
 
 # Database Configuration
 try:
@@ -42,11 +42,11 @@ except Exception as e:
     client = None
 
 # Job API Configuration
-ADZUNA_APP_ID = "b03f76e8"
-ADZUNA_APP_KEY = "3aba17aaa08c6bd408d4f71350fa835a"
+ADZUNA_APP_ID = "your_adzuna_app_id"
+ADZUNA_APP_KEY = "your_adzuna_app_key"
 
 # YouTube API Configuration
-YOUTUBE_API_KEY = "AIzaSyAfUerSBmlyAtJaA_MYQMswD3IZWNeydkA"
+YOUTUBE_API_KEY = "your_youtube_api_key"
 try:
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
     print("YouTube API client built successfully.")
@@ -740,4 +740,5 @@ def quiz_items(result_id):
 if __name__ == "__main__":
     if not os.path.exists("workspace"):
         os.makedirs("workspace")
+
     app.run(host='0.0.0.0', port=5000, debug=True)
